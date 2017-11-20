@@ -25,6 +25,10 @@ public class Maze : MonoBehaviour {
 
 	private List<MazeRoom> rooms = new List<MazeRoom>();
 
+	public Spawner[] spawnstuff;
+
+	public int[] spawnnumbers;
+
 	public IntVector2 RandomCoordinates {
 		get {
 			return new IntVector2(Random.Range(0, size.x), Random.Range(0, size.z));
@@ -142,5 +146,24 @@ public class Maze : MonoBehaviour {
 		newRoom.settings = roomSettings[newRoom.settingsIndex];
 		rooms.Add(newRoom);
 		return newRoom;
+	}
+
+	public void MakeSpawners(){
+		Debug.Log ("Ihate you");
+		for (int i = 0; i < spawnstuff.Length; i++) {
+			Debug.Log ("I loop");
+			int k = 0;
+			Debug.Log ("K Loop");
+				while(k < spawnnumbers[i]){
+					IntVector2 water = RandomCoordinates;
+					MazeCell yoyo = GetCell(water);
+					if(yoyo.CompareTag("Floor")){
+					Spawner spawned = Instantiate(spawnstuff[i]);
+						spawned.transform.position = yoyo.transform.position;
+						yoyo.tag = spawnstuff[i].stuff;
+					}
+					k++;
+				}
+		}
 	}
 }

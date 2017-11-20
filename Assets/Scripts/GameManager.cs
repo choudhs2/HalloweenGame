@@ -22,10 +22,17 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private IEnumerator BeginGame () {
+		Camera.main.rect = new Rect(0f, 0f, 1f, 1f);
 		mazeInstance = Instantiate(mazePrefab) as Maze;
 		yield return StartCoroutine(mazeInstance.Generate());
 		playerInstance = Instantiate(playerPrefab) as Player;
 		playerInstance.SetLocation(mazeInstance.GetCell(mazeInstance.RandomCoordinates));
+		GameObject[] door = GameObject.FindGameObjectsWithTag ("Door");
+		foreach(GameObject d in door){
+			Destroy(d);
+		}
+		mazeInstance.MakeSpawners ();
+		Camera.main.rect = new Rect(0f, 0f, 0f, 0f);
 
 	}
 
@@ -37,4 +44,6 @@ public class GameManager : MonoBehaviour {
 		}
 		StartCoroutine(BeginGame());
 	}
+
+
 }

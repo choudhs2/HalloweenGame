@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class Player : MonoBehaviour {
@@ -9,13 +9,16 @@ public class Player : MonoBehaviour {
 	public float offset;
 	public Rigidbody rb;
 	public GameObject fridge;
+	public int Hitpoints;
+	public int Unlockpoints;
 
 
 	public void SetLocation (MazeCell cell) {
 		currentCell = cell;
 		transform.localPosition = cell.transform.localPosition;
+
 	}
-	
+
 	private void Move (MazeDirection direction) {
 		MazeCellEdge edge = currentCell.GetEdge(direction);
 		if (edge is MazePassage) {
@@ -24,8 +27,10 @@ public class Player : MonoBehaviour {
 	}
 	
 	private void FixedUpdate () {
-		fridge = GameObject.FindGameObjectWithTag ("Fridge");
-		rb = fridge.GetComponent<Rigidbody> ();
+		if(Input.GetKey(KeyCode.R)){
+			fridge = GameObject.FindGameObjectWithTag ("Fridge");
+			rb = fridge.GetComponent<Rigidbody> ();
+		}
 		if (Input.GetKey(KeyCode.W)) {
 			//transform.Translate (Vector3.forward * speed * Time.deltaTime);
 			//Move(MazeDirection.North);
@@ -45,6 +50,35 @@ public class Player : MonoBehaviour {
 			//transform.Translate (Vector3.left * speed * Time.deltaTime);
 			//Move(MazeDirection.West);
 			rb.AddForce(transform.right * -1f * speed);
+		}
+
+		if (Hitpoints <= 0) {
+			Destroy(GameObject.FindGameObjectWithTag("Fridge"));
+		}
+	}
+
+	void OnTriggerEnter(Collider other){
+		if (other.gameObject.CompareTag ("Enemy1")) {
+			Hitpoints -= 10;
+		}
+		if (other.gameObject.CompareTag ("Enemy2")) {
+			Hitpoints -= 20;
+		}
+		if (other.gameObject.CompareTag ("Enemy3")) {
+			Hitpoints -= 30;
+		}
+		if (other.gameObject.CompareTag ("Health")) {
+			Hitpoints += 10;
+			Destroy (other);
+		}
+		if (other.gameObject.CompareTag ("Boss1") || other.gameObject.CompareTag ("Boss2") || other.gameObject.CompareTag ("Boss3")) {
+			Hitpoints -= 50;
+		}
+		if (other.gameObject.CompareTag ("Unlock")) {
+			Unlockpoints++;
+		}
+		if (other.gameObject.CompareTag ("Wall")) {
+			rb.velocity = Vector3.zero;
 		}
 	}
 }
